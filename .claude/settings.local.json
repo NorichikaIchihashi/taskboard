@@ -1,0 +1,11 @@
+{
+  "outputStyle": "Explanatory",
+  "sandbox": {
+    "enabled": true,
+    "autoAllowBashIfSandboxed": true
+  },
+  "enabledMcpjsonServers": [
+    "playwright",
+    "context7"
+  ]
+}

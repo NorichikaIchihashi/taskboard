@@ -1,0 +1,28 @@
+//taskboard-toolkit/hooks/hooks.json
+
+{
+    "hooks": {
+      "PostToolUse": [
+        {
+          "matcher": "Edit|Write",
+          "hooks": [
+            {
+              "type": "command",
+              "command": "${CLAUDE_PLUGIN_ROOT}/scripts/check-after-edit.sh"
+            }
+          ]
+        }
+      ],
+      "PreToolUse": [
+        {
+          "matcher": "Bash",
+          "hooks": [
+            {
+              "type": "command",
+              "command": "${CLAUDE_PLUGIN_ROOT}/scripts/block-dangerous-command.sh"
+            }
+          ]
+        }
+      ]
+    }
+}
