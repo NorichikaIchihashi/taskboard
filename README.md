@@ -90,3 +90,4 @@ npm test
 永続化は jsdom の実物の `localStorage` を使って検証しています。テストごとの後片付けは
 `src/test/setup.ts` の `localStorage.clear()` にまとめてあり、「リロードしても残る」は
 `render` の戻り値の `unmount()` → 再 `render()` で表現しています。
+# taskboard
