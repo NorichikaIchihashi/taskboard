@@ -92,3 +92,5 @@ npm test
 `src/test/setup.ts` の `localStorage.clear()` にまとめてあり、「リロードしても残る」は
 `render` の戻り値の `unmount()` → 再 `render()` で表現しています。
 # taskboard
+
+add comment
