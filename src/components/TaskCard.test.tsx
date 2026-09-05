@@ -123,6 +123,22 @@ describe("TaskCard", () => {
     expect(due).toHaveTextContent("今日");
   });
 
+  it("期限が近ければ「まもなく」を添える", () => {
+    render(
+      <TaskCard
+        task={{ ...task, dueDate: "2026-08-25" }}
+        today={TODAY}
+        onMove={vi.fn()}
+        onDelete={vi.fn()}
+      />,
+    );
+
+    const due = screen.getByLabelText("期限: 2026-08-25（まもなく）");
+    expect(due).toHaveAttribute("data-due-tone", "soon");
+    expect(due).toHaveTextContent("08/25");
+    expect(due).toHaveTextContent("まもなく");
+  });
+
   it("まだ先の期限は強調しない", () => {
     render(
       <TaskCard

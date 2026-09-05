@@ -70,9 +70,9 @@ describe("Board", () => {
     const todo = screen.getByTestId("column-todo");
     expect(within(todo).getByLabelText("担当者: 田中")).toBeInTheDocument();
     expect(within(todo).getByLabelText("優先度: 高")).toBeInTheDocument();
-    expect(within(todo).getByLabelText("期限: 2026-08-25")).toHaveTextContent(
-      "08/25",
-    );
+    expect(
+      within(todo).getByLabelText("期限: 2026-08-25（まもなく）"),
+    ).toHaveTextContent("08/25");
   });
 
   it("優先度の高いタスクが列の先頭に並ぶ", async () => {

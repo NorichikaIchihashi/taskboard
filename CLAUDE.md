@@ -163,7 +163,7 @@ jsdom には実物の `localStorage` があるのでモックは不要。後片�
 | 属性 | 値 |
 |---|---|
 | `data-priority` | `high` / `medium` / `low` |
-| `data-due-tone` | `overdue` / `today` / `upcoming` / `none`（`none` は「今日」が未確定） |
+| `data-due-tone` | `overdue` / `today` / `soon` / `upcoming` / `none`（`none` は「今日」が未確定） |
 
 担当者・優先度・期限は `aria-label`（`担当者: 田中` / `優先度: 高` / `期限: 2026-08-20（期限切れ）`）
 でも引ける。

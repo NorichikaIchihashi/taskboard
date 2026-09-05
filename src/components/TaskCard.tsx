@@ -35,6 +35,7 @@ const priorityBadgeClass: Record<TaskPriority, string> = {
 const dueDateToneClass: Record<DueDateTone, string> = {
   overdue: "font-medium text-red-600 dark:text-red-400",
   today: "font-medium text-amber-600 dark:text-amber-400",
+  soon: "text-yellow-700 dark:text-yellow-400",
   upcoming: "text-black/60 dark:text-white/60",
 };
 
