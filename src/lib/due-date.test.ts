@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 
 import {
   DUE_DATE_TONE_LABELS,
+  DUE_SOON_DAYS,
+  addDays,
   formatDueDate,
   getDueDateTone,
   normalizeDueDate,
@@ -37,6 +39,29 @@ describe("normalizeDueDate", () => {
   });
 });
 
+describe("addDays", () => {
+  it("日数を足した日付を返す", () => {
+    expect(addDays("2026-08-23", 3)).toBe("2026-08-26");
+    expect(addDays("2026-08-23", 0)).toBe("2026-08-23");
+  });
+
+  it("月・年をまたいでも繰り上がる", () => {
+    expect(addDays("2026-08-30", 3)).toBe("2026-09-02");
+    expect(addDays("2026-12-30", 3)).toBe("2027-01-02");
+  });
+
+  it("うるう年の 2 月をまたげる", () => {
+    expect(addDays("2024-02-27", 3)).toBe("2024-03-01");
+    expect(addDays("2025-02-27", 3)).toBe("2025-03-02");
+  });
+
+  it("日付として成立しない値は空文字", () => {
+    expect(addDays("", 3)).toBe("");
+    expect(addDays("きょう", 3)).toBe("");
+    expect(addDays("2026-02-31", 3)).toBe("");
+  });
+});
+
 describe("getDueDateTone", () => {
   const today = "2026-08-23";
 
@@ -49,9 +74,19 @@ describe("getDueDateTone", () => {
     expect(getDueDateTone(today, today)).toBe("today");
   });
 
-  it("今日より後なら upcoming", () => {
-    expect(getDueDateTone("2026-08-24", today)).toBe("upcoming");
+  it(`今日より後でも ${DUE_SOON_DAYS} 日以内なら soon`, () => {
+    expect(getDueDateTone("2026-08-24", today)).toBe("soon");
+    expect(getDueDateTone("2026-08-26", today)).toBe("soon");
+  });
+
+  it(`${DUE_SOON_DAYS} 日より先なら upcoming`, () => {
+    expect(getDueDateTone("2026-08-27", today)).toBe("upcoming");
     expect(getDueDateTone("2027-01-01", today)).toBe("upcoming");
+  });
+
+  it("月をまたいでも日数で判定する", () => {
+    expect(getDueDateTone("2026-09-02", "2026-08-30")).toBe("soon");
+    expect(getDueDateTone("2026-09-03", "2026-08-30")).toBe("upcoming");
   });
 
   it("期限が無い、または今日が分からないときは判定しない", () => {
@@ -64,6 +99,7 @@ describe("DUE_DATE_TONE_LABELS", () => {
   it("強調する状態にだけ表示用の文字を持つ", () => {
     expect(DUE_DATE_TONE_LABELS.overdue).toBe("期限切れ");
     expect(DUE_DATE_TONE_LABELS.today).toBe("今日");
+    expect(DUE_DATE_TONE_LABELS.soon).toBe("まもなく");
     expect(DUE_DATE_TONE_LABELS.upcoming).toBe("");
   });
 });

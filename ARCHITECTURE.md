@@ -97,8 +97,8 @@ flowchart TD
 
 **役割**: 期限文字列の正規化・期限切れ判定・表示整形。期限まわりの判断はここに閉じています。
 
-**主なエクスポート**: `normalizeDueDate` / `getDueDateTone` / `formatDueDate` / `todayString` /
-`DueDateTone` / `DUE_DATE_TONE_LABELS`
+**主なエクスポート**: `normalizeDueDate` / `addDays` / `getDueDateTone` / `formatDueDate` /
+`todayString` / `DueDateTone` / `DUE_DATE_TONE_LABELS` / `DUE_SOON_DAYS`
 
 **設計上の約束**:
 
@@ -112,6 +112,9 @@ flowchart TD
   既定引数のおかげでテストから固定の `Date` を渡せる
 - `getDueDateTone` は `today === ""` のとき `null`（＝強調なし）を返す。これが #7 の
   ハイドレーション対策の受け皿になっている
+- **「あと何日か」も日数差では計算しない。** `soon`（今日より後・`DUE_SOON_DAYS` 日以内）の
+  判定は `addDays(today, DUE_SOON_DAYS)` でしきい日を `"YYYY-MM-DD"` として作り、
+  あとは辞書順の比較で済ませる。しきい値は `DUE_SOON_DAYS` の 1 か所だけにある
 
 ### 4. `src/lib/task-storage.ts` — 永続化の境界
 

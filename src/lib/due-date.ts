@@ -5,14 +5,18 @@
  */
 
 /** 期限の状態。「今日」に依存する判定なので、today は必ず引数で受け取る。 */
-export type DueDateTone = "overdue" | "today" | "upcoming";
+export type DueDateTone = "overdue" | "today" | "soon" | "upcoming";
 
 /** 強調が要らない upcoming だけ空文字。日付の後ろに添える文字。 */
 export const DUE_DATE_TONE_LABELS: Record<DueDateTone, string> = {
   overdue: "期限切れ",
   today: "今日",
+  soon: "まもなく",
   upcoming: "",
 };
+
+/** 今日から何日後までを soon（まもなく期限）とみなすか。 */
+export const DUE_SOON_DAYS = 3;
 
 const DUE_DATE_PATTERN = /^(\d{4})-(\d{2})-(\d{2})$/;
 
@@ -36,6 +40,22 @@ export function normalizeDueDate(value: string): string {
   return isRealDate ? trimmed : "";
 }
 
+/**
+ * "YYYY-MM-DD" に日数を足した "YYYY-MM-DD" を返す。日付として成立しない値は ""。
+ * normalizeDueDate と同じく UTC で組むので、実行環境のタイムゾーンに左右されない。
+ */
+export function addDays(dueDate: string, days: number): string {
+  const normalized = normalizeDueDate(dueDate);
+  if (!normalized) {
+    return "";
+  }
+
+  const [year, month, day] = normalized.split("-").map(Number);
+  return new Date(Date.UTC(year, month - 1, day + days))
+    .toISOString()
+    .slice(0, 10);
+}
+
 /** 期限が無いか、今日が分からない（マウント前）ときは判定しない。 */
 export function getDueDateTone(
   dueDate: string,
@@ -47,7 +67,14 @@ export function getDueDateTone(
   if (dueDate < today) {
     return "overdue";
   }
-  return dueDate === today ? "today" : "upcoming";
+  if (dueDate === today) {
+    return "today";
+  }
+
+  // しきい日そのものを "YYYY-MM-DD" で作れば、判定は辞書順の比較のままで済む。
+  // today が壊れた値なら soonLimit は "" になり、強調しない upcoming に倒れる。
+  const soonLimit = addDays(today, DUE_SOON_DAYS);
+  return soonLimit && dueDate <= soonLimit ? "soon" : "upcoming";
 }
 
 /** 今日と同じ年なら "08/25"、違う年や今日が不明なら "2027/01/05"。 */
